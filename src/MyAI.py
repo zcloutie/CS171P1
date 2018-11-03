@@ -155,8 +155,15 @@ class MyAI ( Agent ):
 		else:
 			if self._map[x][y] == "":
 				self._map[x][y] = z
+				if z == "W?":
+					wumpus_possibles.append(x,y)
 			elif self._map[x][y] == "S" or self._map[x][y] == "S?":
 				return
+			if z = "S?":
+				if self._map[x][y] == "W?"
+					self.wumpus_possibles.remove(x)
+				self._map[x][y] = z
+		
 				
 	def adj_map(x,y,z):
 		update_map(x+1,y,z)
@@ -167,74 +174,15 @@ class MyAI ( Agent ):
 	def pit_danger():
 		adj_danger(self.row, self.column, "P?")
       
-      
     def safe():
-      if self.row == self.maxgrid and self.column == self.maxgrid:
-        for x in [(self.row-1,self.column),(self.row,self.column-1)]:
-          if "W?" in self._map[x[0]][x[1]]:
-            self.wumpus_possibles.remove(x)
-          self._map[x[0]][x[1]]="S"
-      elif self.row == 0:
-        for x in [(self.row+1,self.column),(self.row,self.column+1),(self.row,self.column-1)]:
-          if "W?" in self._map[x[0]][x[1]]:
-            self.wumpus_possibles.remove(x)
-          self._map[x[0]][x[1]]="S"
-      elif self.row == self.maxgrid:
-        for x in [(self.row-1,self.column),(self.row,self.column+1),(self.row,self.column-1)]:
-          if "W?" in self._map[x[0]][x[1]]:
-            self.wumpus_possibles.remove(x)
-          self._map[x[0]][x[1]]="S"
-      elif self.column == 0:
-        for x in [(self.row+1,self.column),(self.row,self.column+1),(self.row-1,self.column)]:
-          if "W?" in self._map[x[0]][x[1]]:
-            self.wumpus_possibles.remove(x)
-          self._map[x[0]][x[1]]="S"
-      elif self.column == self.maxgrid:
-        for x in [(self.row-1,self.column),(self.row+1,self.column),(self.row,self.column-1)]:
-          if "W?" in self._map[x[0]][x[1]]:
-            self.wumpus_possibles.remove(x)
-          self._map[x[0]][x[1]]="S"
-      else:
-        for x in [(self.row-1,self.column),(self.row+1,self.column),(self.row,self.column-1),(self.row,self.column+1)]:
-          if "W?" in self._map[x[0]][x[1]]:
-            self.wumpus_possibles.remove(x)
-          self._map[x[0]][x[1]]="S"
-      return
+		adj_danger(self.row, self.column, "S?")
+      
     def wumpus_danger():
-      if self.row == self.maxgrid and self.column == self.maxgrid:
-        for x in [(self.row-1,self.column),(self.row,self.column-1)]:
-          if "S" not in self._map[x[0]][x[1]]:
-            self._map[x[0]][x[1]]+="W?"
-            wumpus_possibles.append(x)
-      elif self.row == 0:
-        for x in [(self.row+1,self.column),(self.row,self.column+1),(self.row,self.column-1)]:
-          if "S" not in self._map[x[0]][x[1]]:
-            self._map[x[0]][x[1]]+="W?"
-            wumpus_possibles.append(x)
-      elif self.row == self.maxgrid:
-        for x in [(self.row-1,self.column),(self.row,self.column+1),(self.row,self.column-1)]:
-          if "S" not in self._map[x[0]][x[1]]:
-            self._map[x[0]][x[1]]+="W?"
-            wumpus_possibles.append(x)
-      elif self.column == 0:
-        for x in [(self.row+1,self.column),(self.row,self.column+1),(self.row-1,self.column)]:
-          if "S" not in self._map[x[0]][x[1]]:
-            self._map[x[0]][x[1]]+="W?"
-            wumpus_possibles.append(x)
-      elif self.column == self.maxgrid:
-        for x in [(self.row-1,self.column),(self.row+1,self.column),(self.row,self.column-1)]:
-          if "S" not in self._map[x[0]][x[1]]:
-            self._map[x[0]][x[1]]+="W?"
-            wumpus_possibles.append(x)
-      else:
-        for x in [(self.row-1,self.column),(self.row+1,self.column),(self.row,self.column-1),(self.row,self.column+1)]:
-          if "S" not in self._map[x[0]][x[1]]:
-            self._map[x[0]][x[1]]+="W?"
-            wumpus_possibles.append(x)
-      self.stench_sources.append((self.row,self.column))
+		adj_danger(self.row, self.column, "W?")
+		self.stench_sources.append((self.row,self.column))
       """if len(self.stench_sources) >= 2:
         self.wheres_wumpus()"""
-      return
+		return
     """def wheres_wumpus():
       for x in self.stench_sources:
         for i in self.wumpus_possibles"""
