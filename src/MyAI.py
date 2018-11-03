@@ -249,24 +249,48 @@ class MyAI ( Agent ):
         path.append((c_row,c_col))
         return (path,cost)
       if self.row == self.maxgrid and self.column == self.maxgrid:
-        
-      elif self.row == self.maxgrid:
-      
-      elif self.column == self.maxgrid:
-      
-      else:
-        if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
-          info = path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
-          if info != False:
-            path = info[0]
-            path.append((c_row,c_col))
-            return (path,info[1])
         if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
           info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            return (path,info[1])
+            paths.append(path,info[1])
+        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+          info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if paths.empty():
+            return False
+      elif self.row == self.maxgrid:
+        if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
+          info = path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+          info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+          info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if paths.empty():
+            return False
+      elif self.column == self.maxgrid:
+        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+          info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
         if self._map[self.row+1][self.column] == "S" and previous !=(c_row+1,c_col):
           info = path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
           if info != False:
@@ -274,13 +298,46 @@ class MyAI ( Agent ):
             path.append((c_row,c_col))
             paths(path,info[1])
         if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
-          info = path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
+          info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
-        
-      return False
+        if paths.empty():
+            return False
+
+      else:
+        if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
+          info = path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+          info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if self._map[self.row+1][self.column] == "S" and previous !=(c_row+1,c_col):
+          info = path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths(path,info[1])
+        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+          info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append(path,info[1])
+        if paths.empty():
+            return False
+      best_path = paths[0]
+      for x in paths:
+        if x[1] > path[1]:
+          path = x
+      return best_path
     # ======================================================================
     # YOUR CODE ENDS
     # ======================================================================
