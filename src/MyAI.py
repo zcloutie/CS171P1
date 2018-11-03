@@ -145,32 +145,29 @@ class MyAI ( Agent ):
         return self._map[self.row][self.column+1]
       elif self.direction == "S":
         return self._map[self.row-1][self.column]
-    def pit_danger():
-      if self.row == self.maxgrid and self.column == self.maxgrid:
-        for x in [self._map[self.row-1][self.column],self._map[self.row][self.column-1]]:
-          if "S" not in x:
-            x+="P?"
-      elif self.row == 0:
-        for x in [self._map[self.row+1][self.column],self._map[self.row][self.column+1],self._map[self.row][self.column-1]]:
-          if "S" not in x:
-            x+="P?"
-      elif self.row == self.maxgrid:
-        for x in [self._map[self.row-1][self.column],self._map[self.row][self.column+1],self._map[self.row][self.column-1]]:
-          if "S" not in x:
-            x+="P?"
-      elif self.column == 0:
-        for x in [self._map[self.row+1][self.column],self._map[self.row][self.column+1],self._map[self.row-1][self.column]]:
-          if "S" not in x:
-            x+="P?"
-      elif self.column == self.maxgrid:
-        for x in [self._map[self.row-1][self.column],self._map[self.row+1][self.column],self._map[self.row][self.column-1]]:
-          if "S" not in x:
-            x+="P?"
-      else:
-        for x in [self._map[self.row-1][self.column],self._map[self.row+1][self.column],self._map[self.row][self.column-1],self._map[self.row][self.column+1]]:
-          if "S" not in x:
-            x+="P?"
-      return
+    
+	
+	def update_map(x,y,z):
+		if x > self.maxgrid or x < 0:
+			return
+		elif y > self.maxgrid or y < 0:
+			return
+		else:
+			if self._map[x][y] == "":
+				self._map[x][y] = z
+			elif self._map[x][y] == "S" or self._map[x][y] == "S?":
+				return
+				
+	def adj_map(x,y,z):
+		update_map(x+1,y,z)
+		update_map(x-1,y,z)
+		update_map(x,y+1,z)
+		update_map(x,y-1,z)
+		
+	def pit_danger():
+		adj_danger(self.row, self.column, "P?")
+      
+      
     def safe():
       if self.row == self.maxgrid and self.column == self.maxgrid:
         for x in [(self.row-1,self.column),(self.row,self.column-1)]:
