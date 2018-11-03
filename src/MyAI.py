@@ -188,17 +188,23 @@ class MyAI ( Agent ):
         return self._map[self.row-1][self.column]
     
 	
-    def update_map(x,y,z):
-  		if x > self.maxgrid or x < 0:
-  			return
-  		elif y > self.maxgrid or y < 0:
-  			return
-  		else:
-  			if self._map[x][y] == "":
-  				self._map[x][y] = z
-  			elif self._map[x][y] == "S" or self._map[x][y] == "S?":
-  				return
-  				
+	def update_map(x,y,z):
+		if x > self.maxgrid or x < 0:
+			return
+		elif y > self.maxgrid or y < 0:
+			return
+		else:
+			if self._map[x][y] == "":
+				self._map[x][y] = z
+				if z == "W?":
+					wumpus_possibles.append(x,y)
+			elif self._map[x][y] == "S" or self._map[x][y] == "S?":
+				return
+			if z = "S?":
+				if self._map[x][y] == "W?"
+					self.wumpus_possibles.remove(x)
+				self._map[x][y] = z
+			
   	def adj_map(x,y,z):
   		update_map(x+1,y,z)
   		update_map(x-1,y,z)
