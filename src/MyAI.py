@@ -136,6 +136,47 @@ class MyAI ( Agent ):
         Agent.Action.TURN_RIGHT
         self.direction = "W"
       return self.direction
+
+    def turn_to(row,col):
+      if row == self.row:
+        if col > self.column:
+          if self.direction == "E":
+            return
+          elif self.direction == "W":
+            self.reverse()
+          elif self.direction == "N":
+            self.turn_right()
+          elif self.direction == "S":
+            self.turn_left()
+        else:
+          if self.direction == "W":
+            return
+          elif self.direction == "E":
+            self.reverse()
+          elif self.direction == "S":
+            self.turn_right()
+          elif self.direction == "N":
+            self.turn_left()
+      else:
+        if row > self.row:
+          if self.direction == "N":
+            return
+          elif self.direction == "S":
+            self.reverse()
+          elif self.direction == "W":
+            self.turn_right()
+          elif self.direction == "E":
+            self.turn_left()
+        else:
+          if self.direction == "S":
+            return
+          elif self.direction == "N":
+            self.reverse()
+          elif self.direction == "E":
+            self.turn_right()
+          elif self.direction == "W":
+            self.turn_left()
+      return
     def whats_forward():
       if self.direction == "N":
         return self._map[self.row+1][self.column]
@@ -147,32 +188,25 @@ class MyAI ( Agent ):
         return self._map[self.row-1][self.column]
     
 	
-	def update_map(x,y,z):
-		if x > self.maxgrid or x < 0:
-			return
-		elif y > self.maxgrid or y < 0:
-			return
-		else:
-			if self._map[x][y] == "":
-				self._map[x][y] = z
-				if z == "W?":
-					wumpus_possibles.append(x,y)
-			elif self._map[x][y] == "S" or self._map[x][y] == "S?":
-				return
-			if z = "S?":
-				if self._map[x][y] == "W?"
-					self.wumpus_possibles.remove(x)
-				self._map[x][y] = z
-		
-				
-	def adj_map(x,y,z):
-		update_map(x+1,y,z)
-		update_map(x-1,y,z)
-		update_map(x,y+1,z)
-		update_map(x,y-1,z)
-		
-	def pit_danger():
-		adj_danger(self.row, self.column, "P?")
+    def update_map(x,y,z):
+  		if x > self.maxgrid or x < 0:
+  			return
+  		elif y > self.maxgrid or y < 0:
+  			return
+  		else:
+  			if self._map[x][y] == "":
+  				self._map[x][y] = z
+  			elif self._map[x][y] == "S" or self._map[x][y] == "S?":
+  				return
+  				
+  	def adj_map(x,y,z):
+  		update_map(x+1,y,z)
+  		update_map(x-1,y,z)
+  		update_map(x,y+1,z)
+  		update_map(x,y-1,z)
+  		
+  	def pit_danger():
+  		adj_danger(self.row, self.column, "P?")
       
     def safe():
 		adj_danger(self.row, self.column, "S?")
@@ -190,6 +224,19 @@ class MyAI ( Agent ):
       distance = abs(p1[0]-p2[0])
       distance+= abs(p1[1]-p2[1])
       return distance
+
+    def move_to_point(row,col):
+      path = path_to_point(row,col,self.row,self.column,0,(self.row,self.column))[0].reverse()
+      while not path.empty():
+        self.move_to_next(path[0][0],path[0][1])
+        path.pop(0)
+      return
+      
+    def move_to_next(row,col)
+      self.turn_to(row,col)
+      return Agent.Action.FORWARD
+
+    
     def path_to_point(row,col,c_row,c_col,cost,previous):
       path = []
       paths = []
@@ -253,7 +300,6 @@ class MyAI ( Agent ):
             paths.append(path,info[1])
         if paths.empty():
             return False
-
       else:
         if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
           info = path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
