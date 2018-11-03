@@ -207,7 +207,7 @@ class MyAI ( Agent ):
           self._map[x][y] = z
           if z == "W?":
             wumpus_possibles.append(x,y)
-        elif self._map[x][y] == "S" or self._map[x][y] == "S?"
+        elif self._map[x][y] == "S" or self._map[x][y] == "S?":
           return
           
     def adj_map(x,y,z):
@@ -238,7 +238,7 @@ class MyAI ( Agent ):
         path.pop(0)
       return
       
-    def move_to_next(row,col)
+    def move_to_next(row,col):
       self.turn_to(row,col)
       return Agent.Action.FORWARD
 
