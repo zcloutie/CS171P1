@@ -57,7 +57,7 @@ class MyAI ( Agent ):
           self._map[self.row][self.column+1] = "S"
           self.frontier.append((self.row+1,self.column))
 
-        if gold:
+        if self.gold:
             self.move_to_point(0,0)
         if glitter:
           self.gold = True
@@ -65,11 +65,11 @@ class MyAI ( Agent ):
         if bump:
           self.hitEdge()
         if breeze:
-          pit_danger()
+          self.pit_danger()
         if stench and wumpus_alive:
-          wumpus_danger()
+          self.wumpus_danger()
         if not breeze and (not stench or not wumpus_alive):
-          safe()
+          self.safe()
         if scream:
           self.wumpus_alive = False
 
@@ -85,7 +85,7 @@ class MyAI ( Agent ):
     # ======================================================================
     # YOUR CODE BEGINS
     # ======================================================================
-    def hitEdge():
+    def hitEdge(self):
       if self.direction == "E":
         self.maxgrid = self.column
         self.maxgrid = self.column
@@ -93,7 +93,7 @@ class MyAI ( Agent ):
         self.maxgrid = self.row
         self.maxgrid = self.row
       return
-    def reverse():
+    def reverse(self):
       if self.direction == "N":
         Agent.Action.TURN_RIGHT
         Agent.Action.TURN_RIGHT
@@ -111,7 +111,7 @@ class MyAI ( Agent ):
         Agent.Action.TURN_RIGHT
         self.direction = "N"
       return self.direction
-    def turn_left():
+    def turn_left(self):
       if self.direction == "N":
         Agent.Action.TURN_LEFT
         self.direction = "W"
@@ -125,7 +125,7 @@ class MyAI ( Agent ):
         Agent.Action.TURN_LEFT
         self.direction = "E"
       return self.direction
-    def turn_right():
+    def turn_right(self):
       if self.direction == "N":
         Agent.Action.TURN_RIGHT
         self.direction = "E"
@@ -140,7 +140,7 @@ class MyAI ( Agent ):
         self.direction = "W"
       return self.direction
 
-    def turn_to(row,col):
+    def turn_to(self,row,col):
       if row == self.row:
         if col > self.column:
           if self.direction == "E":
@@ -181,7 +181,7 @@ class MyAI ( Agent ):
             self.turn_left()
       return
     
-    def whats_forward():
+    def whats_forward(self):
       if self.direction == "N":
         return self._map[self.row+1][self.column]
       elif self.direction == "W":
@@ -191,7 +191,7 @@ class MyAI ( Agent ):
       elif self.direction == "S":
         return self._map[self.row-1][self.column]
     
-    def update_map(x,y,z):
+    def update_map(self,x,y,z):
       if x > self.maxgrid or x < 0:
         return
       elif y > self.maxgrid or y < 0:
@@ -210,39 +210,39 @@ class MyAI ( Agent ):
         elif self._map[x][y] == "S" or self._map[x][y] == "S?":
           return
           
-    def adj_map(x,y,z):
+    def adj_map(self,x,y,z):
       update_map(x+1,y,z)
       update_map(x-1,y,z)
       update_map(x,y+1,z)
       update_map(x,y-1,z)
   		
-    def pit_danger():
+    def pit_danger(self):
       adj_danger(self.row, self.column, "P?")
       
-    def safe():
+    def safe(self):
       adj_danger(self.row, self.column, "S?")
       
-    def wumpus_danger():
+    def wumpus_danger(self):
       adj_danger(self.row, self.column, "W?")
       self.stench_sources.append((self.row,self.column))
 	
-    def distance(p1,p2):
+    def distance(self,p1,p2):
       distance = abs(p1[0]-p2[0])
       distance+= abs(p1[1]-p2[1])
       return distance
 
-    def move_to_point(row,col):
+    def move_to_point(self,row,col):
       path = path_to_point(row,col,self.row,self.column,0,(self.row,self.column))[0].reverse()
       while not path.empty():
         self.move_to_next(path[0][0],path[0][1])
         path.pop(0)
       return
       
-    def move_to_next(row,col):
+    def move_to_next(self,row,col):
       self.turn_to(row,col)
       return Agent.Action.FORWARD
 
-    def search():
+    def search(self):
         go_to = self.frontier[0]
         for i in self.frontier:
             if distance((self.row,self.column),i) < distance((self.row,self.column),go_to):
@@ -251,7 +251,7 @@ class MyAI ( Agent ):
         return self.frontier.remove(go_to)
 
     
-    def path_to_point(row,col,c_row,c_col,cost,previous):
+    def path_to_point(self,row,col,c_row,c_col,cost,previous):
       path = []
       paths = []
       if row == c_row and col == c_col:
