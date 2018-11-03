@@ -35,8 +35,7 @@ class MyAI ( Agent ):
         self.wumpus_location = self._map[0][0]
         self.wumpus_alive = True
         self.gold = False       
-        self.direction = "E"   
-        print(self._map)
+        self.direction = "E"
                 
         pass
         # ======================================================================
@@ -54,11 +53,12 @@ class MyAI ( Agent ):
         elif self.row == 0 and self.column == 0:
           self._map[self.row][self.column] = "S"
           self._map[self.row+1][self.column] = "S"
+          self.frontier.append((self.row+1,self.column))
           self._map[self.row][self.column+1] = "S"
-          print(self._map)
-          self.column+=1
-          return Agent.Action.Forward
-        
+          self.frontier.append((self.row+1,self.column))
+
+        if gold:
+            self.move_to_point(0,0)
         if glitter:
           self.gold = True
           return Agent.Action.GRAB
@@ -72,9 +72,12 @@ class MyAI ( Agent ):
           safe()
         if scream:
           self.wumpus_alive = False
-                
-        
-        return Agent.Action.CLIMB            
+
+        if self.frontier.empty():
+            self.move_to_point(0,0)
+            return Agent.Action.CLIMB
+        else:
+            self.search()
         # ======================================================================
         # YOUR CODE ENDS
         # ======================================================================
