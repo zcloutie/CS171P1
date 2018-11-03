@@ -77,7 +77,7 @@ class MyAI ( Agent ):
             self.move_to_point(0,0)
             return Agent.Action.CLIMB
         else:
-            self.search()
+            return self.search()
         # ======================================================================
         # YOUR CODE ENDS
         # ======================================================================
@@ -239,6 +239,10 @@ class MyAI ( Agent ):
     def move_to_next(row,col)
       self.turn_to(row,col)
       return Agent.Action.FORWARD
+
+    def search():
+        self.move_to_point(self.frontier[0][0],self.frontier[0][1])
+        return frontier.pop(0)
 
     
     def path_to_point(row,col,c_row,c_col,cost,previous):
