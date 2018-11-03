@@ -241,8 +241,12 @@ class MyAI ( Agent ):
       return Agent.Action.FORWARD
 
     def search():
-        self.move_to_point(self.frontier[0][0],self.frontier[0][1])
-        return frontier.pop(0)
+        go_to = self.frontier[0]
+        for i in self.frontier:
+            if distance((self.row,self.column),i) < distance((self.row,self.column),go_to):
+                go_to = i
+        self.move_to_point(go_to)
+        return self.frontier.remove(go_to)
 
     
     def path_to_point(row,col,c_row,c_col,cost,previous):
