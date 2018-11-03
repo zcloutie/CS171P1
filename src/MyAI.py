@@ -211,19 +211,19 @@ class MyAI ( Agent ):
           return
           
     def adj_map(self,x,y,z):
-      update_map(x+1,y,z)
-      update_map(x-1,y,z)
-      update_map(x,y+1,z)
-      update_map(x,y-1,z)
+      self.update_map(x+1,y,z)
+      self.update_map(x-1,y,z)
+      self.update_map(x,y+1,z)
+      self.update_map(x,y-1,z)
   		
     def pit_danger(self):
-      adj_danger(self.row, self.column, "P?")
+      self.adj_map(self.row, self.column, "P?")
       
     def safe(self):
-      adj_danger(self.row, self.column, "S?")
+      self.adj_map(self.row, self.column, "S?")
       
     def wumpus_danger(self):
-      adj_danger(self.row, self.column, "W?")
+      self.adj_map(self.row, self.column, "W?")
       self.stench_sources.append((self.row,self.column))
 	
     def distance(self,p1,p2):
