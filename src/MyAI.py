@@ -73,7 +73,7 @@ class MyAI ( Agent ):
         if scream:
           self.wumpus_alive = False
 
-        if self.frontier.empty():
+        if len(self.frontier) == 0:
             self.move_to_point(0,0)
             return Agent.Action.CLIMB
         else:
@@ -232,8 +232,8 @@ class MyAI ( Agent ):
       return distance
 
     def move_to_point(self,row,col):
-      path = path_to_point(row,col,self.row,self.column,0,(self.row,self.column))[0].reverse()
-      while not path.empty():
+      path = self.path_to_point(row,col,self.row,self.column,0,(self.row,self.column))[0].reverse()
+      while len(path) != 0:
         self.move_to_next(path[0][0],path[0][1])
         path.pop(0)
       return
@@ -245,10 +245,10 @@ class MyAI ( Agent ):
     def search(self):
         go_to = self.frontier[0]
         for i in self.frontier:
-            if distance((self.row,self.column),i) < distance((self.row,self.column),go_to):
+            if self.distance((self.row,self.column),i) < self.distance((self.row,self.column),go_to):
                 go_to = i
-        self.move_to_point(go_to)
-        return self.frontier.remove(go_to)
+        self.move_to_point(go_to[0],go_to[1])
+        self.frontier.remove(go_to[0],go_to[1])
 
     
     def path_to_point(self,row,col,c_row,c_col,cost,previous):
@@ -270,7 +270,7 @@ class MyAI ( Agent ):
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
-        if paths.empty():
+        if len(paths) != 0:
             return False
       elif self.row == self.maxgrid:
         if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
@@ -291,7 +291,7 @@ class MyAI ( Agent ):
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
-        if paths.empty():
+        if len(paths) != 0:
             return False
       elif self.column == self.maxgrid:
         if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
@@ -312,34 +312,34 @@ class MyAI ( Agent ):
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
-        if paths.empty():
+        if len(paths) != 0:
             return False
       else:
         if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
-          info = path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
+          info = self.path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
         if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
-          info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
+          info = self.path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
         if self._map[self.row+1][self.column] == "S" and previous !=(c_row+1,c_col):
-          info = path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
+          info = self.path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
             paths(path,info[1])
         if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
-          info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
+          info = self.path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
             paths.append(path,info[1])
-        if paths.empty():
+        if len(paths) != 0:
             return False
       best_path = paths[0]
       for x in paths:
