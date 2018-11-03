@@ -180,6 +180,7 @@ class MyAI ( Agent ):
           elif self.direction == "W":
             self.turn_left()
       return
+    
     def whats_forward():
       if self.direction == "N":
         return self._map[self.row+1][self.column]
@@ -190,41 +191,41 @@ class MyAI ( Agent ):
       elif self.direction == "S":
         return self._map[self.row-1][self.column]
     
-	
     def update_map(x,y,z):
-	if x > self.maxgrid or x < 0:
-            return
-	elif y > self.maxgrid or y < 0:
-	    return
-	else:
-	    if self._map[x][y] == "":
-                self._map[x][y] = z
-	    if z == "W?":
-		wumpus_possibles.append(x,y)
-	    elif self._map[x][y] == "S" or self._map[x][y] == "S?":
-		return
-            if z = "S?":
-                if self._map[x][y] == "W?":
-		    self.wumpus_possibles.remove(x)
-		self.frontier.append((x,y))
-	    self._map[x][y] = z
-			
+      if x > self.maxgrid or x < 0:
+        return
+      elif y > self.maxgrid or y < 0:
+        return
+      else:
+        if z == "S?":
+          if self._map[x][y] == "W?":
+            self.wumpus_possibles.remove(x)
+            self._map[x][y] = z
+            if (x,y) not in self.frontier:
+              self.frontier.append(x,y)
+        if self._map[x][y] == "":
+          self._map[x][y] = z
+          if z == "W?":
+            wumpus_possibles.append(x,y)
+        elif self._map[x][y] == "S" or self._map[x][y] == "S?"
+          return
+          
     def adj_map(x,y,z):
-        update_map(x+1,y,z)
-  	update_map(x-1,y,z)
-  	update_map(x,y+1,z)
-  	update_map(x,y-1,z)
+      update_map(x+1,y,z)
+      update_map(x-1,y,z)
+      update_map(x,y+1,z)
+      update_map(x,y-1,z)
   		
     def pit_danger():
-        adj_danger(self.row, self.column, "P?")
+      adj_danger(self.row, self.column, "P?")
       
     def safe():
-	adj_danger(self.row, self.column, "S?")
+      adj_danger(self.row, self.column, "S?")
       
     def wumpus_danger():
-	adj_danger(self.row, self.column, "W?")
-        self.stench_sources.append((self.row,self.column))
-	return
+      adj_danger(self.row, self.column, "W?")
+      self.stench_sources.append((self.row,self.column))
+	
     def distance(p1,p2):
       distance = abs(p1[0]-p2[0])
       distance+= abs(p1[1]-p2[1])
