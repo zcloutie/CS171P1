@@ -215,17 +215,12 @@ class MyAI ( Agent ):
         adj_danger(self.row, self.column, "P?")
       
     def safe():
-		adj_danger(self.row, self.column, "S?")
+	adj_danger(self.row, self.column, "S?")
       
     def wumpus_danger():
-		adj_danger(self.row, self.column, "W?")
-		self.stench_sources.append((self.row,self.column))
-      """if len(self.stench_sources) >= 2:
-        self.wheres_wumpus()"""
-		return
-    """def wheres_wumpus():
-      for x in self.stench_sources:
-        for i in self.wumpus_possibles"""
+	adj_danger(self.row, self.column, "W?")
+        self.stench_sources.append((self.row,self.column))
+	return
     def distance(p1,p2):
       distance = abs(p1[0]-p2[0])
       distance+= abs(p1[1]-p2[1])
