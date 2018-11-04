@@ -57,8 +57,6 @@ class MyAI ( Agent ):
           self.frontier.append((self.row+1,self.column))
           self._map[self.row][self.column+1] = "S"
           self.frontier.append((self.row,self.column+1))
-
-        self._map[self.row][self.column] = "M{}".format(self.direction)
         if len(self.to_do) == 0:
           if glitter:
             print("FOUND GOLD")
