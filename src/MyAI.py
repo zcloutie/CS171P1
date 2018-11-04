@@ -116,49 +116,37 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
       return
     def reverse(self):
       if self.direction == "U":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction == "D"
       elif self.direction == "L":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "R"
       elif self.direction == "R":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "L"
       elif self.direction == "D":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "U"
+      self.to_do.append(Agent.Action.TURN_RIGHT)
+      self.to_do.append(Agent.Action.TURN_RIGHT)
       return self.direction
     def turn_left(self):
       if self.direction == "U":
-        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "L"
       elif self.direction == "L":
-        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction == "D"
       elif self.direction == "R":
-        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "U"
       elif self.direction == "D":
-        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "R"
+      self.to_do.append(Agent.Action.TURN_LEFT)
       return self.direction
     def turn_right(self):
       if self.direction == "U":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "R"
       elif self.direction == "L":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "U"
       elif self.direction == "R":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction == "D"
       elif self.direction == "D":
-        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "L"
+      self.to_do.append(Agent.Action.TURN_RIGHT)
       return self.direction
 
     def turn_to(self,row,col):
