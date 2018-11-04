@@ -73,7 +73,7 @@ class MyAI ( Agent ):
             if self._map[r][c] == "S?":
               if (r,c) not in self.frontier:
                 self.frontier.append((r,c))
-        "self.print_info()"
+        """self.print_info()"""
         if glitter:
             """print("FOUND GOLD")"""
             self.row = self.t_row
@@ -106,6 +106,8 @@ class MyAI ( Agent ):
             self.arrived = False
             self.move_to_point(0,0)
           else:
+              while (len(self.frontier) != 0 and not self.in_bounds(self.frontier[0])):
+                self.frontier.pop(0)
               if len(self.frontier) == 0:
                 self.arrived = False
                 self.retreat = True
@@ -146,6 +148,7 @@ self.maxrow = {}
 self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col,self.maxrow,self.maxcol))
 
     def hitEdge(self):
+      """if self.bumped == False:"""
       if self.direction == "R":
         self.bumped = True
         self.t_col+=-1
@@ -305,13 +308,17 @@ self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self.
       self.t_col = self.column
       """print("TRYING TO GET PATH TO {},{} from {},{}".format(row,col,self.row,self.column))"""
       """self.print_info()"""
-      path = self.path_to_point(row,col,self.row,self.column,0,[])[0]
-      path.reverse()
-      """print("PATH TO {},{}:{}".format(row,col,path))"""
-      while len(path) != 0:
-        self.move_to_next(path[0][0],path[0][1])
-        path.pop(0)
-      return
+      path = self.path_to_point(row,col,self.row,self.column,0,[])
+      if path != False:
+        path[0].reverse()
+        """print("PATH TO {},{}:{}".format(row,col,path))"""
+        while len(path[0]) != 0:
+          self.move_to_next(path[0][0][0],path[0][0][1])
+          path[0].pop(0)
+        return True
+      else:
+        return False
+
       
     def move_to_next(self,row,col):
       if self.row == row and self.column == col:
@@ -327,7 +334,9 @@ self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self.
         for i in self.frontier:
             if self.distance((self.row,self.column),i) < self.distance((self.row,self.column),go_to):
                 go_to = i
-        self.move_to_point(go_to[0],go_to[1])
+        while (not self.move_to_point(go_to[0],go_to[1])):
+          self.frontier.remove((go_to[0],go_to[1]))
+          go_to = self.frontier[0]
         self.frontier.remove((go_to[0],go_to[1]))
 
     
@@ -354,6 +363,32 @@ self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self.
       elif c_row == 0 and c_col == 0:
         if "S" in self._map[c_row][c_col+1] and not (c_row,c_col+1)in explored:
           info = self.path_to_point(row,col,c_row,c_col+1,cost+1,explored)
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row+1][c_col] and not (c_row+1,c_col)in explored:
+          info = self.path_to_point(row,col,c_row+1,c_col,cost+1,explored)
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append((path,info[1]))
+      elif c_row == self.maxrow and c_col == 0:
+        if "S" in self._map[c_row][c_col+1] and not (c_row,c_col+1)in explored:
+          info = self.path_to_point(row,col,c_row,c_col+1,cost+1,explored)
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row-1][c_col] and not (c_row-1,c_col)in explored:
+          info = self.path_to_point(row,col,c_row-1,c_col,cost+1,explored)
+          if info != False:
+            path = info[0]
+            path.append((c_row,c_col))
+            paths.append((path,info[1]))
+      elif c_row == 0 and c_col == self.maxcol:
+        if "S" in self._map[c_row][c_col-1] and not (c_row,c_col-1)in explored:
+          info = self.path_to_point(row,col,c_row,c_col-1,cost+1,explored)
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
