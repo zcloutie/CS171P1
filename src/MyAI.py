@@ -68,7 +68,7 @@ class MyAI ( Agent ):
             self.hitEdge()
           if breeze:
             self.pit_danger()
-          if stench and wumpus_alive:
+          if stench and self.wumpus_alive:
             self.wumpus_danger()
           if not breeze and (not stench or not wumpus_alive):
             self.safe()
@@ -254,6 +254,8 @@ class MyAI ( Agent ):
       return
       
     def move_to_next(self,row,col):
+      if self.row == row and self.column == col:
+        return
       self.turn_to(row,col)
       self.row = row
       self.column = col
