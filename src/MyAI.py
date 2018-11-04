@@ -305,7 +305,7 @@ self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map
       self.t_row = self.row
       self.t_col = self.column
       """print("TRYING TO GET PATH TO {},{} from {},{}".format(row,col,self.row,self.column))"""
-      self.print_info()
+      """self.print_info()"""
       path = self.path_to_point(row,col,self.row,self.column,0,[])[0]
       path.reverse()
       """print("PATH TO {},{}:{}".format(row,col,path))"""
