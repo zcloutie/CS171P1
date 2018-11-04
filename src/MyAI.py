@@ -43,6 +43,7 @@ class MyAI ( Agent ):
         self.arrived = True
         self.retreat = False
         self.initial = True
+        self.bumped = False
                 
         pass
         # ======================================================================
@@ -71,9 +72,9 @@ class MyAI ( Agent ):
             if self._map[r][c] == "S?":
               if (r,c) not in self.frontier:
                 self.frontier.append((r,c))
-        self.print_info()
+        "self.print_info()"
         if glitter:
-            print("FOUND GOLD")
+            """print("FOUND GOLD")"""
             self.row = self.t_row
             self.column = self.t_col
             self.direction = self.t_dir
@@ -100,7 +101,7 @@ class MyAI ( Agent ):
             self.wumpus_alive = False
             
           if self.gold:
-            print("MOVING HOME")
+            """print("MOVING HOME")"""
             self.arrived = False
             self.move_to_point(0,0)
           else:
@@ -139,18 +140,36 @@ self.column = {} \n
 self.frontier = {} \n
 self.direction = {} \n
 self.t_row = {}
-self.t_col = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col))
+self.t_col = {}
+self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col,self.maxgrid))
 
     def hitEdge(self):
-      if self.direction == "R":
-        self.t_col+=-1
-        self.maxgrid = self.t_col
-        self.maxgrid = self.t_col
-      elif self.direction == "U":
-        self.t_row+=-1
-        self.maxgrid = self.t_row
-        self.maxgrid = self.t_row
+      if self.bumped == False:
+        if self.direction == "R":
+          self.bumped = True
+          self.t_col+=-1
+          self.maxgrid = self.t_col
+          self.maxgrid = self.t_col
+        elif self.direction == "U":
+          self.bumped = True
+          self.t_row+=-1
+          self.maxgrid = self.t_row
+          self.maxgrid = self.t_row
+      if self.bumped:
+        to_remove = []
+        for i in self.frontier:
+          if not self.in_bounds(i):
+            to_remove.append(i)
+        for e in to_remove:
+          self.frontier.remove(e)
       return
+
+    def in_bounds(self,coor):
+      if coor[0] > self.maxgrid or coor[0] < 0:
+        return False
+      if coor[1] > self.maxgrid or coor[1] < 0:
+        return False
+      return True
 
     def reverse(self):
       if self.direction == "U":
@@ -190,7 +209,6 @@ self.t_col = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._
       return self.direction
 
     def turn_to(self,row,col):
-      print(self.direction)
       if self.row == row and self.column == col:
         return self.direction
       if (self.row+1,self.column) == (row,col):
@@ -229,7 +247,6 @@ self.t_col = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._
           self.turn_left()
         elif self.direction == "R":
           self.reverse()
-      print("turned to " + self.direction)
       return self.direction
     
     def whats_forward(self):
@@ -287,11 +304,11 @@ self.t_col = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._
     def move_to_point(self,row,col):
       self.t_row = self.row
       self.t_col = self.column
-      print("TRYING TO GET PATH TO {},{} from {},{}".format(row,col,self.row,self.column))
+      """print("TRYING TO GET PATH TO {},{} from {},{}".format(row,col,self.row,self.column))"""
       self.print_info()
       path = self.path_to_point(row,col,self.row,self.column,0,[])[0]
       path.reverse()
-      print("PATH TO {},{}:{}".format(row,col,path))
+      """print("PATH TO {},{}:{}".format(row,col,path))"""
       while len(path) != 0:
         self.move_to_next(path[0][0],path[0][1])
         path.pop(0)
