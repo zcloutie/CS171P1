@@ -35,7 +35,7 @@ class MyAI ( Agent ):
         self.wumpus_location = self._map[0][0]
         self.wumpus_alive = True
         self.gold = False       
-        self.direction = "E"
+        self.direction = "R"
         self.to_do = []
                 
         pass
@@ -53,13 +53,13 @@ class MyAI ( Agent ):
           return Agent.Action.CLIMB
         elif self.row == 0 and self.column == 0:
           self._map[self.row][self.column] = "S"
-          self._map[self.row+1][self.column] = "S?"
+          self._map[self.row+1][self.column] = "S"
           self.frontier.append((self.row+1,self.column))
-          self._map[self.row][self.column+1] = "S?"
+          self._map[self.row][self.column+1] = "S"
           self.frontier.append((self.row,self.column+1))
 
+        self._map[self.row][self.column] = "M{}".format(self.direction)
         if len(self.to_do) == 0:
-          print("NOTHING TO DO")
           if glitter:
             print("FOUND GOLD")
             self.gold = True
@@ -81,13 +81,11 @@ class MyAI ( Agent ):
           else:
               if len(self.frontier) == 0:
                   self.move_to_point(0,0)
-                  print("ATTEMPTING TO MOVE TO {},{}".format(0,0))
               elif not self.gold:
                   self.search()
         if len(self.to_do) != 0:          
           next_action = self.to_do[0]
-          print("ATTEMPTING ACTION {}".format(next_action))
-          self.print_map()
+          self.print_info()
           self.to_do.pop(0)
           return next_action
         # ======================================================================
@@ -98,122 +96,124 @@ class MyAI ( Agent ):
     # YOUR CODE BEGINS
     # ======================================================================
 
-    def print_map(self):
+    def print_info(self):
         print("""{},{},{},{},{},{},{} \n
 {},{},{},{},{},{},{} \n
 {},{},{},{},{},{},{} \n
 {},{},{},{},{},{},{} \n
 {},{},{},{},{},{},{} \n
 {},{},{},{},{},{},{} \n
-{},{},{},{},{},{},{} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6]))
+{},{},{},{},{},{},{} \n
+self.row = {} \n
+self.column = {} \n
+self.frontier = {} \n
+self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6]),self.row,self.column,self.frontier,self.direction)
     def hitEdge(self):
-      if self.direction == "E":
+      if self.direction == "R":
         self.maxgrid = self.column
         self.maxgrid = self.column
-      elif self.direction == "N":
+      elif self.direction == "U":
         self.maxgrid = self.row
         self.maxgrid = self.row
       return
     def reverse(self):
-      if self.direction == "N":
+      if self.direction == "U":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "S"
-      elif self.direction == "W":
+        self.direction == "D"
+      elif self.direction == "L":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "E"
-      elif self.direction == "E":
+        self.direction = "R"
+      elif self.direction == "R":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "W"
-      elif self.direction == "S":
+        self.direction = "L"
+      elif self.direction == "D":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "N"
+        self.direction = "U"
       return self.direction
     def turn_left(self):
-      if self.direction == "N":
+      if self.direction == "U":
         self.to_do.append(Agent.Action.TURN_LEFT)
-        self.direction = "W"
-      elif self.direction == "W":
+        self.direction = "L"
+      elif self.direction == "L":
         self.to_do.append(Agent.Action.TURN_LEFT)
-        self.direction = "S"
-      elif self.direction == "E":
+        self.direction == "D"
+      elif self.direction == "R":
         self.to_do.append(Agent.Action.TURN_LEFT)
-        self.direction = "N"
-      elif self.direction == "S":
+        self.direction = "U"
+      elif self.direction == "D":
         self.to_do.append(Agent.Action.TURN_LEFT)
-        self.direction = "E"
+        self.direction = "R"
       return self.direction
     def turn_right(self):
-      if self.direction == "N":
+      if self.direction == "U":
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "E"
-      elif self.direction == "W":
+        self.direction = "R"
+      elif self.direction == "L":
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "N"
-      elif self.direction == "E":
+        self.direction = "U"
+      elif self.direction == "R":
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "S"
-      elif self.direction == "S":
+        self.direction == "D"
+      elif self.direction == "D":
         self.to_do.append(Agent.Action.TURN_RIGHT)
-        self.direction = "W"
+        self.direction = "L"
       return self.direction
 
     def turn_to(self,row,col):
       if self.row == row and self.column == col:
-        print("JK")
         return self.direction
       if row == self.row:
         if col > self.column:
-          if self.direction == "E":
+          if self.direction == "R":
             return
-          elif self.direction == "W":
+          elif self.direction == "L":
             self.reverse()
-          elif self.direction == "N":
+          elif self.direction == "U":
             self.turn_right()
-          elif self.direction == "S":
+          elif self.direction == "D":
             self.turn_left()
         else:
-          if self.direction == "W":
+          if self.direction == "L":
             return
-          elif self.direction == "E":
+          elif self.direction == "R":
             self.reverse()
-          elif self.direction == "S":
+          elif self.direction == "D":
             self.turn_right()
-          elif self.direction == "N":
+          elif self.direction == "U":
             self.turn_left()
       elif col == self.column:
         if row > self.row:
-          if self.direction == "N":
+          if self.direction == "U":
             return
-          elif self.direction == "S":
+          elif self.direction == "D":
             self.reverse()
-          elif self.direction == "W":
+          elif self.direction == "L":
             self.turn_right()
-          elif self.direction == "E":
+          elif self.direction == "R":
             self.turn_left()
         else:
-          if self.direction == "S":
+          if self.direction == "D":
             return
-          elif self.direction == "N":
+          elif self.direction == "U":
             self.reverse()
-          elif self.direction == "E":
+          elif self.direction == "R":
             self.turn_right()
-          elif self.direction == "W":
+          elif self.direction == "L":
             self.turn_left()
-      print(self.direction)
       return self.direction
     
     def whats_forward(self):
-      if self.direction == "N":
+      if self.direction == "U":
         return self._map[self.row+1][self.column]
-      elif self.direction == "W":
+      elif self.direction == "L":
         return self._map[self.row][self.column-1]
-      elif self.direction == "E":
+      elif self.direction == "R":
         return self._map[self.row][self.column+1]
-      elif self.direction == "S":
+      elif self.direction == "D":
         return self._map[self.row-1][self.column]
     
     def update_map(self,x,y,z):
@@ -222,9 +222,9 @@ class MyAI ( Agent ):
       elif y > self.maxgrid or y < 0:
         return
       else:
-        if self._map[y][x] == "S" or self._map[y][x] == "S?":
+        if self._map[y][x] == "S" or self._map[y][x] == "S":
           return
-        if z == "S?":
+        if z == "S":
           if self._map[y][x] == "W?":
             self.wumpus_possibles.remove((y,x))
           self._map[y][x] = z
@@ -246,7 +246,7 @@ class MyAI ( Agent ):
       self.adj_map(self.row, self.column, "P?")
       
     def safe(self):
-      self.adj_map(self.row, self.column, "S?")
+      self.adj_map(self.row, self.column, "S")
       
     def wumpus_danger(self):
       self.adj_map(self.row, self.column, "W?")
@@ -281,7 +281,6 @@ class MyAI ( Agent ):
             if self.distance((self.row,self.column),i) < self.distance((self.row,self.column),go_to):
                 go_to = i
         self.move_to_point(go_to[0],go_to[1])
-        print("ATTEMPTING TO MOVE TO {}".format(go_to))
         self.frontier.remove((go_to[0],go_to[1]))
 
     
