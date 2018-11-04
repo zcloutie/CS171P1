@@ -36,6 +36,7 @@ class MyAI ( Agent ):
         self.wumpus_alive = True
         self.gold = False       
         self.direction = "E"
+        self.to_do = []
                 
         pass
         # ======================================================================
@@ -52,32 +53,42 @@ class MyAI ( Agent ):
           return Agent.Action.CLIMB
         elif self.row == 0 and self.column == 0:
           self._map[self.row][self.column] = "S"
-          self._map[self.row+1][self.column] = "S"
+          self._map[self.row+1][self.column] = "S?"
           self.frontier.append((self.row+1,self.column))
-          self._map[self.row][self.column+1] = "S"
-          self.frontier.append((self.row+1,self.column))
+          self._map[self.row][self.column+1] = "S?"
+          self.frontier.append((self.row,self.column+1))
 
-        if self.gold:
-            self.move_to_point(0,0)
-        if glitter:
-          self.gold = True
-          return Agent.Action.GRAB
-        if bump:
-          self.hitEdge()
-        if breeze:
-          self.pit_danger()
-        if stench and wumpus_alive:
-          self.wumpus_danger()
-        if not breeze and (not stench or not wumpus_alive):
-          self.safe()
-        if scream:
-          self.wumpus_alive = False
-
-        if len(self.frontier) == 0:
-            self.move_to_point(0,0)
-            return Agent.Action.CLIMB
-        else:
-            return self.search()
+        if len(self.to_do) == 0:
+          print("NOTHING TO DO")
+          if glitter:
+            print("FOUND GOLD")
+            self.gold = True
+            return Agent.Action.GRAB
+          if bump:
+            self.hitEdge()
+          if breeze:
+            self.pit_danger()
+          if stench and wumpus_alive:
+            self.wumpus_danger()
+          if not breeze and (not stench or not wumpus_alive):
+            self.safe()
+          if scream:
+            self.wumpus_alive = False
+            
+          if self.gold:
+              print("MOVING HOME")
+              self.move_to_point(0,0)
+          else:
+              if len(self.frontier) == 0:
+                  self.move_to_point(0,0)
+                  print("ATTEMPTING TO MOVE TO {},{}".format(0,0))
+              elif not self.gold:
+                  self.search()
+        if len(self.to_do) != 0:          
+          next_action = self.to_do[0]
+          print("ATTEMPTING ACTION {}".format(next_action))
+          self.to_do.pop(0)
+          return next_action
         # ======================================================================
         # YOUR CODE ENDS
         # ======================================================================
@@ -95,52 +106,54 @@ class MyAI ( Agent ):
       return
     def reverse(self):
       if self.direction == "N":
-        Agent.Action.TURN_RIGHT
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "S"
       if self.direction == "W":
-        Agent.Action.TURN_RIGHT
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "E"
       if self.direction == "E":
-        Agent.Action.TURN_RIGHT
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "W"
       if self.direction == "S":
-        Agent.Action.TURN_RIGHT
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "N"
       return self.direction
     def turn_left(self):
       if self.direction == "N":
-        Agent.Action.TURN_LEFT
+        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "W"
       if self.direction == "W":
-        Agent.Action.TURN_LEFT
+        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "S"
       if self.direction == "E":
-        Agent.Action.TURN_LEFT
+        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "N"
       if self.direction == "S":
-        Agent.Action.TURN_LEFT
+        self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "E"
       return self.direction
     def turn_right(self):
       if self.direction == "N":
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "E"
       if self.direction == "W":
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "N"
       if self.direction == "E":
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "S"
       if self.direction == "S":
-        Agent.Action.TURN_RIGHT
+        self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "W"
       return self.direction
 
     def turn_to(self,row,col):
+      if self.row == row and self.column == col:
+        return self.direction
       if row == self.row:
         if col > self.column:
           if self.direction == "E":
@@ -179,7 +192,7 @@ class MyAI ( Agent ):
             self.turn_right()
           elif self.direction == "W":
             self.turn_left()
-      return
+      return self.direction
     
     def whats_forward(self):
       if self.direction == "N":
@@ -232,7 +245,9 @@ class MyAI ( Agent ):
       return distance
 
     def move_to_point(self,row,col):
-      path = self.path_to_point(row,col,self.row,self.column,0,(self.row,self.column))[0].reverse()
+      path = self.path_to_point(row,col,self.row,self.column,0,(self.row,self.column))[0]
+      path.reverse()
+      print("PATH TO {},{}:{}".format(row,col,path))
       while len(path) != 0:
         self.move_to_next(path[0][0],path[0][1])
         path.pop(0)
@@ -240,7 +255,10 @@ class MyAI ( Agent ):
       
     def move_to_next(self,row,col):
       self.turn_to(row,col)
-      return Agent.Action.FORWARD
+      self.row = row
+      self.column = col
+      self.to_do.append(Agent.Action.FORWARD)
+      return
 
     def search(self):
         go_to = self.frontier[0]
@@ -248,7 +266,8 @@ class MyAI ( Agent ):
             if self.distance((self.row,self.column),i) < self.distance((self.row,self.column),go_to):
                 go_to = i
         self.move_to_point(go_to[0],go_to[1])
-        self.frontier.remove(go_to[0],go_to[1])
+        print("ATTEMPTING TO MOVE TO {}".format(go_to))
+        self.frontier.remove((go_to[0],go_to[1]))
 
     
     def path_to_point(self,row,col,c_row,c_col,cost,previous):
@@ -257,94 +276,94 @@ class MyAI ( Agent ):
       if row == c_row and col == c_col:
         path.append((c_row,c_col))
         return (path,cost)
-      if self.row == self.maxgrid and self.column == self.maxgrid:
-        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+      if c_row == self.maxgrid and c_col == self.maxgrid:
+        if "S" in self._map[c_row][c_col-1] and previous !=(c_row,c_col-1):
           info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row-1][c_col] and previous !=(c_row-1,c_col):
           info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if len(paths) != 0:
+            paths.append((path,info[1]))
+        if len(paths) == 0:
             return False
-      elif self.row == self.maxgrid:
-        if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
+      elif c_row == self.maxgrid:
+        if "S" in self._map[c_row][c_col+1] and previous !=(c_row,c_col+1):
           info = path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row][c_col-1] and previous !=(c_row,c_col-1):
           info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row-1][c_col] and previous !=(c_row-1,c_col):
           info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if len(paths) != 0:
+            paths.append((path,info[1]))
+        if len(paths) == 0:
             return False
-      elif self.column == self.maxgrid:
-        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+      elif c_col == self.maxgrid:
+        if "S" in self._map[c_row][c_col-1] and previous !=(c_row,c_col-1):
           info = path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if self._map[self.row+1][self.column] == "S" and previous !=(c_row+1,c_col):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row+1][c_col] and previous !=(c_row+1,c_col):
           info = path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths(path,info[1])
-        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+            paths((path,info[1]))
+        if "S" in self._map[c_row-1][c_col] and previous !=(c_row-1,c_col):
           info = path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if len(paths) != 0:
+            paths.append((path,info[1]))
+        if len(paths) == 0:
             return False
       else:
-        if self._map[self.row][self.column+1] == "S" and previous !=(c_row,c_col+1):
+        if "S" in self._map[c_row][c_col+1] and previous !=(c_row,c_col+1):
           info = self.path_to_point(row,col,c_row,c_col+1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if self._map[self.row][self.column-1] == "S" and previous !=(c_row,c_col-1):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row][c_col-1] and previous !=(c_row,c_col-1):
           info = self.path_to_point(row,col,c_row,c_col-1,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if self._map[self.row+1][self.column] == "S" and previous !=(c_row+1,c_col):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row+1][c_col] and previous !=(c_row+1,c_col):
           info = self.path_to_point(row,col,c_row+1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths(path,info[1])
-        if self._map[self.row-1][self.column] == "S" and previous !=(c_row-1,c_col):
+            paths.append((path,info[1]))
+        if "S" in self._map[c_row-1][c_col] and previous !=(c_row-1,c_col):
           info = self.path_to_point(row,col,c_row-1,c_col,cost+1,(c_row,c_col))
           if info != False:
             path = info[0]
             path.append((c_row,c_col))
-            paths.append(path,info[1])
-        if len(paths) != 0:
+            paths.append((path,info[1]))
+        if len(paths) == 0:
             return False
       best_path = paths[0]
       for x in paths:
-        if x[1] > path[1]:
-          path = x
+        if x[1] > best_path[1]:
+          best_path = x
       return best_path
     # ======================================================================
     # YOUR CODE ENDS
