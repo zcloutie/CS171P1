@@ -25,7 +25,7 @@ class MyAI ( Agent ):
         # ======================================================================
         # YOUR CODE BEGINS
         # ======================================================================
-        self._map = [["" for x in range(7)] for x in range(7)]
+        self._map = [["  " for x in range(7)] for x in range(7)]
         self.row = 0
         self.column = 0
         self.maxgrid = 6
@@ -87,6 +87,7 @@ class MyAI ( Agent ):
         if len(self.to_do) != 0:          
           next_action = self.to_do[0]
           print("ATTEMPTING ACTION {}".format(next_action))
+          self.print_map()
           self.to_do.pop(0)
           return next_action
         # ======================================================================
@@ -96,6 +97,15 @@ class MyAI ( Agent ):
     # ======================================================================
     # YOUR CODE BEGINS
     # ======================================================================
+
+    def print_map(self):
+        print("""{},{},{},{},{},{},{} \n
+{},{},{},{},{},{},{} \n
+{},{},{},{},{},{},{} \n
+{},{},{},{},{},{},{} \n
+{},{},{},{},{},{},{} \n
+{},{},{},{},{},{},{} \n
+{},{},{},{},{},{},{} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6]))
     def hitEdge(self):
       if self.direction == "E":
         self.maxgrid = self.column
