@@ -40,6 +40,8 @@ class MyAI ( Agent ):
         self.direction = "R"
         self.to_do = []
         self.arrived = True
+        self.retreat = False
+        self.initial = True
                 
         pass
         # ======================================================================
@@ -51,16 +53,17 @@ class MyAI ( Agent ):
         # YOUR CODE BEGINS
         # ======================================================================
         
-        if self.row == 0 and self.column == 0 and (stench or breeze):        
+        if self.row == 0 and self.column == 0 and (stench or breeze) and self.arrived:        
           return Agent.Action.CLIMB
-        if self.row == 0 and self.column == 0 and self.gold and self.arrived:
-          return Agent.Action.CLIMB
-        elif self.row == 0 and self.column == 0:
+        if self.row == 0 and self.column == 0 and (self.gold or self.retreat) and (self.t_row,self.t_col) == (self.row,self.column):
+          self.to_do.append((Agent.Action.CLIMB,(self.row,self.column)))
+        elif self.row == 0 and self.column == 0 and self.initial:
           self._map[self.row][self.column] = "S"
           self._map[self.row+1][self.column] = "S?"
           self.frontier.append((self.row+1,self.column))
           self._map[self.row][self.column+1] = "S?"
           self.frontier.append((self.row,self.column+1))
+        self.initial = False
         self._map[self.row][self.column] = "S"
         for r in range(len(self._map)):
           for c in range(len(self._map)):
@@ -70,16 +73,18 @@ class MyAI ( Agent ):
         self.print_info()
         if glitter:
             print("FOUND GOLD")
+            self.row = self.t_row
+            self.column = self.t_col
             self.gold = True
             self.to_do = []
             self.arrived = True
             return Agent.Action.GRAB
         if bump:
             self.to_do = []
+            self.hitEdge()
             self.row = self.t_row
             self.column = self.t_col
-            self.hitEdge()
-            arrived = True
+            self.arrived = True
         if len(self.to_do) == 0:
           self.arrived = True
           
@@ -99,6 +104,7 @@ class MyAI ( Agent ):
           else:
               if len(self.frontier) == 0:
                 self.arrived = False
+                self.retreat = True
                 self.move_to_point(0,0)
               elif not self.gold:
                 self.arrived = False
@@ -132,16 +138,18 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
 
     def hitEdge(self):
       if self.direction == "R":
-        self.maxgrid = self.column
-        self.maxgrid = self.column
+        self.t_col+=-1
+        self.maxgrid = self.t_col
+        self.maxgrid = self.t_col
       elif self.direction == "U":
-        self.maxgrid = self.row
-        self.maxgrid = self.row
+        self.t_row+=-1
+        self.maxgrid = self.t_row
+        self.maxgrid = self.t_row
       return
 
     def reverse(self):
       if self.direction == "U":
-        self.direction == "D"
+        self.direction = "D"
       elif self.direction == "L":
         self.direction = "R"
       elif self.direction == "R":
@@ -156,7 +164,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
       if self.direction == "U":
         self.direction = "L"
       elif self.direction == "L":
-        self.direction == "D"
+        self.direction = "D"
       elif self.direction == "R":
         self.direction = "U"
       elif self.direction == "D":
@@ -170,7 +178,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
       elif self.direction == "L":
         self.direction = "U"
       elif self.direction == "R":
-        self.direction == "D"
+        self.direction = "D"
       elif self.direction == "D":
         self.direction = "L"
       self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column)))
@@ -180,45 +188,43 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
       print(self.direction)
       if self.row == row and self.column == col:
         return self.direction
-      if row == self.row:
-        if col > self.column:
-          if self.direction == "R":
-            return
-          elif self.direction == "L":
-            self.reverse()
-          elif self.direction == "U":
-            self.turn_right()
-          elif self.direction == "D":
-            self.turn_left()
-        else:
-          if self.direction == "L":
-            return
-          elif self.direction == "R":
-            self.reverse()
-          elif self.direction == "D":
-            self.turn_right()
-          elif self.direction == "U":
-            self.turn_left()
-      elif col == self.column:
-        if row > self.row:
-          if self.direction == "U":
-            return
-          elif self.direction == "D":
-            self.reverse()
-          elif self.direction == "L":
-            self.turn_right()
-          elif self.direction == "R":
-            self.turn_left()
-        else:
-          if self.direction == "D":
-            return
-          elif self.direction == "U":
-            self.reverse()
-          elif self.direction == "R":
-            self.turn_right()
-          elif self.direction == "L":
-            self.turn_left()
-      print("turned to" + self.direction)
+      if (self.row+1,self.column) == (row,col):
+        if self.direction == "U":
+          return self.direction
+        elif self.direction == "L":
+          self.turn_right()
+        elif self.direction == "R":
+          self.turn_left()
+        elif self.direction == "D":
+          self.reverse()
+      elif (self.row-1,self.column) == (row,col):
+        if self.direction == "D":
+          return self.direction
+        elif self.direction == "R":
+          self.turn_right()
+        elif self.direction == "L":
+          self.turn_left()
+        elif self.direction == "U":
+          self.reverse()
+      elif (self.row,self.column+1) == (row,col):
+        if self.direction == "R":
+          return self.direction
+        elif self.direction == "U":
+          self.turn_right()
+        elif self.direction == "D":
+          self.turn_left()
+        elif self.direction == "L":
+          self.reverse()
+      elif (self.row,self.column-1) == (row,col):
+        if self.direction == "L":
+          return self.direction
+        elif self.direction == "D":
+          self.turn_right()
+        elif self.direction == "U":
+          self.turn_left()
+        elif self.direction == "R":
+          self.reverse()
+      print("turned to " + self.direction)
       return self.direction
     
     def whats_forward(self):
@@ -244,7 +250,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
           if self._map[r][c] == "W?":
             self.wumpus_possibles.remove((r,c))
           self._map[r][c] = z
-          if ((r,c)) not in self.frontier:
+          if (r,c) not in self.frontier:
             self.frontier.append((r,c))
         if self._map[r][c] == "":
           self._map[r][c] = z
