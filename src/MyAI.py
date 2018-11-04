@@ -211,16 +211,16 @@ class MyAI ( Agent ):
         return
       else:
         if z == "S?":
-          if self._map[x][y] == "W?":
-            self.wumpus_possibles.remove(x)
-            self._map[x][y] = z
-            if (x,y) not in self.frontier:
-              self.frontier.append(x,y)
-        if self._map[x][y] == "":
-          self._map[x][y] = z
+          if self._map[y][x] == "W?":
+            self.wumpus_possibles.remove(y,x)
+            self._map[y][x] = z
+            if (y,x) not in self.frontier:
+              self.frontier.append(y,x)
+        if self._map[y][x] == "":
+          self._map[y][x] = z
           if z == "W?":
-            wumpus_possibles.append(x,y)
-        elif self._map[x][y] == "S" or self._map[x][y] == "S?":
+            wumpus_possibles.append(y,x)
+        elif self._map[y][x] == "S" or self._map[y][x] == "S?":
           return
           
     def adj_map(self,x,y,z):
