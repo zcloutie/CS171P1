@@ -212,18 +212,19 @@ class MyAI ( Agent ):
       elif y > self.maxgrid or y < 0:
         return
       else:
+        if self._map[y][x] == "S" or self._map[y][x] == "S?":
+          return
         if z == "S?":
           if self._map[y][x] == "W?":
             self.wumpus_possibles.remove((y,x))
-            self._map[y][x] = z
-            if (y,x) not in self.frontier:
-              self.frontier.append((y,x))
+          self._map[y][x] = z
+          if (y,x) not in self.frontier:
+            self.frontier.append((y,x))
         if self._map[y][x] == "":
           self._map[y][x] = z
           if z == "W?":
             self.wumpus_possibles.append((y,x))
-        elif self._map[y][x] == "S" or self._map[y][x] == "S?":
-          return
+        
           
     def adj_map(self,x,y,z):
       self.update_map(x+1,y,z)
