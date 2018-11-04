@@ -216,37 +216,38 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
       elif self.direction == "D":
         return self._map[self.row-1][self.column]
     
-    def update_map(self,x,y,z):
-      if x > self.maxgrid or x < 0:
+    
+    def update_map(self,r,c,z):
+      if r > self.maxgrid or r < 0:
         return
-      elif y > self.maxgrid or y < 0:
+      elif c > self.maxgrid or c < 0:
         return
       else:
-        if self._map[y][x] == "S" or self._map[y][x] == "S":
+        if self._map[r][c] == "S" or self._map[r][c] == "S?":
           return
-        if z == "S":
-          if self._map[y][x] == "W?":
-            self.wumpus_possibles.remove((y,x))
-          self._map[y][x] = z
-          if (y,x) not in self.frontier:
+        if z == "S?":
+          if self._map[r][c] == "W?":
+            self.wumpus_possibles.remove((r,c))
+          self._map[r][c] = z
+          if (r,c) not in self.frontier:
             self.frontier.append((y,x))
-        if self._map[y][x] == "":
-          self._map[y][x] = z
+        if self._map[r][c] == "":
+          self._map[r][c] = z
           if z == "W?":
-            self.wumpus_possibles.append((y,x))
+            self.wumpus_possibles.append((r,c))
         
           
-    def adj_map(self,x,y,z):
-      self.update_map(x+1,y,z)
-      self.update_map(x-1,y,z)
-      self.update_map(x,y+1,z)
-      self.update_map(x,y-1,z)
+    def adj_map(self,r,c,z):
+      self.update_map(r+1,c,z)
+      self.update_map(r-1,c,z)
+      self.update_map(r,c+1,z)
+      self.update_map(r,c-1,z)
   		
     def pit_danger(self):
       self.adj_map(self.row, self.column, "P?")
       
     def safe(self):
-      self.adj_map(self.row, self.column, "S")
+      self.adj_map(self.row, self.column, "S?")
       
     def wumpus_danger(self):
       self.adj_map(self.row, self.column, "W?")
