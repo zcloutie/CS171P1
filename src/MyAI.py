@@ -230,7 +230,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
             self.wumpus_possibles.remove((r,c))
           self._map[r][c] = z
           if (r,c) not in self.frontier:
-            self.frontier.append((y,x))
+            self.frontier.append((r,c))
         if self._map[r][c] == "":
           self._map[r][c] = z
           if z == "W?":
