@@ -70,7 +70,7 @@ class MyAI ( Agent ):
             self.pit_danger()
           if stench and self.wumpus_alive:
             self.wumpus_danger()
-          if not breeze and (not stench or not wumpus_alive):
+          if not breeze and (not stench or not self.wumpus_alive):
             self.safe()
           if scream:
             self.wumpus_alive = False
@@ -109,15 +109,15 @@ class MyAI ( Agent ):
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "S"
-      if self.direction == "W":
+      elif self.direction == "W":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "E"
-      if self.direction == "E":
+      elif self.direction == "E":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "W"
-      if self.direction == "S":
+      elif self.direction == "S":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "N"
@@ -126,13 +126,13 @@ class MyAI ( Agent ):
       if self.direction == "N":
         self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "W"
-      if self.direction == "W":
+      elif self.direction == "W":
         self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "S"
-      if self.direction == "E":
+      elif self.direction == "E":
         self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "N"
-      if self.direction == "S":
+      elif self.direction == "S":
         self.to_do.append(Agent.Action.TURN_LEFT)
         self.direction = "E"
       return self.direction
@@ -140,19 +140,20 @@ class MyAI ( Agent ):
       if self.direction == "N":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "E"
-      if self.direction == "W":
+      elif self.direction == "W":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "N"
-      if self.direction == "E":
+      elif self.direction == "E":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "S"
-      if self.direction == "S":
+      elif self.direction == "S":
         self.to_do.append(Agent.Action.TURN_RIGHT)
         self.direction = "W"
       return self.direction
 
     def turn_to(self,row,col):
       if self.row == row and self.column == col:
+        print("JK")
         return self.direction
       if row == self.row:
         if col > self.column:
@@ -173,7 +174,7 @@ class MyAI ( Agent ):
             self.turn_right()
           elif self.direction == "N":
             self.turn_left()
-      else:
+      elif col == self.column:
         if row > self.row:
           if self.direction == "N":
             return
@@ -192,6 +193,7 @@ class MyAI ( Agent ):
             self.turn_right()
           elif self.direction == "W":
             self.turn_left()
+      print(self.direction)
       return self.direction
     
     def whats_forward(self):
@@ -212,14 +214,14 @@ class MyAI ( Agent ):
       else:
         if z == "S?":
           if self._map[y][x] == "W?":
-            self.wumpus_possibles.remove(y,x)
+            self.wumpus_possibles.remove((y,x))
             self._map[y][x] = z
             if (y,x) not in self.frontier:
-              self.frontier.append(y,x)
+              self.frontier.append((y,x))
         if self._map[y][x] == "":
           self._map[y][x] = z
           if z == "W?":
-            wumpus_possibles.append(y,x)
+            self.wumpus_possibles.append((y,x))
         elif self._map[y][x] == "S" or self._map[y][x] == "S?":
           return
           
