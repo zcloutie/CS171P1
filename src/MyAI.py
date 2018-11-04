@@ -31,7 +31,8 @@ class MyAI ( Agent ):
         self.t_row = 0
         self.t_col = 0
         self.t_dir = "R"
-        self.maxgrid = 6
+        self.maxrow = 6
+        self.maxcol = 6
         self.frontier = []
         self.stench_sources=[]
         self.wumpus_possibles = []
@@ -141,20 +142,18 @@ self.frontier = {} \n
 self.direction = {} \n
 self.t_row = {}
 self.t_col = {}
-self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col,self.maxgrid))
+self.maxrow = {}
+self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col,self.maxrow,self.maxcol))
 
     def hitEdge(self):
-      if self.bumped == False:
-        if self.direction == "R":
-          self.bumped = True
-          self.t_col+=-1
-          self.maxgrid = self.t_col
-          self.maxgrid = self.t_col
-        elif self.direction == "U":
-          self.bumped = True
-          self.t_row+=-1
-          self.maxgrid = self.t_row
-          self.maxgrid = self.t_row
+      if self.direction == "R":
+        self.bumped = True
+        self.t_col+=-1
+        self.maxcol = self.t_col
+      elif self.direction == "U":
+        self.bumped = True
+        self.t_row+=-1
+        self.maxrow = self.t_row
       if self.bumped:
         to_remove = []
         for i in self.frontier:
@@ -165,9 +164,9 @@ self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map
       return
 
     def in_bounds(self,coor):
-      if coor[0] > self.maxgrid or coor[0] < 0:
+      if coor[0] > self.maxrow or coor[0] < 0:
         return False
-      if coor[1] > self.maxgrid or coor[1] < 0:
+      if coor[1] > self.maxcol or coor[1] < 0:
         return False
       return True
 
@@ -261,9 +260,9 @@ self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map
     
     
     def update_map(self,r,c,z):
-      if r > self.maxgrid or r < 0:
+      if r > self.maxrow or r < 0:
         return
-      elif c > self.maxgrid or c < 0:
+      elif c > self.maxcol or c < 0:
         return
       else:
         if self._map[r][c] == "S" or self._map[r][c] == "S?":
@@ -339,7 +338,7 @@ self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map
       if row == c_row and col == c_col:
         path.append((c_row,c_col))
         return (path,cost)
-      if c_row == self.maxgrid and c_col == self.maxgrid:
+      if c_row == self.maxrow and c_col == self.maxcol:
         if "S" in self._map[c_row][c_col-1] and not (c_row,c_col-1) in explored:
           info = self.path_to_point(row,col,c_row,c_col-1,cost+1,explored)
           if info != False:
@@ -365,7 +364,7 @@ self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map
             path = info[0]
             path.append((c_row,c_col))
             paths.append((path,info[1]))
-      elif c_row == self.maxgrid:
+      elif c_row == self.maxrow:
         if "S" in self._map[c_row][c_col+1] and not (c_row,c_col+1)in explored:
           info = self.path_to_point(row,col,c_row,c_col+1,cost+1,explored)
           if info != False:
@@ -403,7 +402,7 @@ self.maxgrid""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map
             path = info[0]
             path.append((c_row,c_col))
             paths.append((path,info[1]))
-      elif c_col == self.maxgrid:
+      elif c_col == self.maxcol:
         if "S" in self._map[c_row][c_col-1] and not (c_row,c_col-1)in explored:
           info = self.path_to_point(row,col,c_row,c_col-1,cost+1,explored)
           if info != False:
