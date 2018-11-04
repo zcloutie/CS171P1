@@ -30,6 +30,7 @@ class MyAI ( Agent ):
         self.column = 0
         self.t_row = 0
         self.t_col = 0
+        self.t_dir = "R"
         self.maxgrid = 6
         self.frontier = []
         self.stench_sources=[]
@@ -56,7 +57,7 @@ class MyAI ( Agent ):
         if self.row == 0 and self.column == 0 and (stench or breeze) and self.arrived:        
           return Agent.Action.CLIMB
         if self.row == 0 and self.column == 0 and (self.gold or self.retreat) and (self.t_row,self.t_col) == (self.row,self.column):
-          self.to_do.append((Agent.Action.CLIMB,(self.row,self.column)))
+          self.to_do.append((Agent.Action.CLIMB,(self.row,self.column),self.direction))
         elif self.row == 0 and self.column == 0 and self.initial:
           self._map[self.row][self.column] = "S"
           self._map[self.row+1][self.column] = "S?"
@@ -75,6 +76,7 @@ class MyAI ( Agent ):
             print("FOUND GOLD")
             self.row = self.t_row
             self.column = self.t_col
+            self.direction = self.t_dir
             self.gold = True
             self.to_do = []
             self.arrived = True
@@ -113,6 +115,7 @@ class MyAI ( Agent ):
           next_action = self.to_do[0][0]
           self.t_row = self.to_do[0][1][0]
           self.t_col = self.to_do[0][1][1]
+          self.t_dir = self.to_do[0][2]
           self.to_do.pop(0)
           return next_action
         # ======================================================================
@@ -134,7 +137,9 @@ class MyAI ( Agent ):
 self.row = {} \n
 self.column = {} \n
 self.frontier = {} \n
-self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction))
+self.direction = {} \n
+self.t_row = {}
+self.t_col = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col))
 
     def hitEdge(self):
       if self.direction == "R":
@@ -156,8 +161,8 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
         self.direction = "L"
       elif self.direction == "D":
         self.direction = "U"
-      self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column)))
-      self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column)))
+      self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column),self.direction))
+      self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column),self.direction))
       return self.direction
 
     def turn_left(self):
@@ -169,7 +174,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
         self.direction = "U"
       elif self.direction == "D":
         self.direction = "R"
-      self.to_do.append((Agent.Action.TURN_LEFT,(self.row,self.column)))
+      self.to_do.append((Agent.Action.TURN_LEFT,(self.row,self.column),self.direction))
       return self.direction
 
     def turn_right(self):
@@ -181,7 +186,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
         self.direction = "D"
       elif self.direction == "D":
         self.direction = "L"
-      self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column)))
+      self.to_do.append((Agent.Action.TURN_RIGHT,(self.row,self.column),self.direction))
       return self.direction
 
     def turn_to(self,row,col):
@@ -282,7 +287,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
     def move_to_point(self,row,col):
       self.t_row = self.row
       self.t_col = self.column
-      print("TRYING TO GET PATH TO {},{}".format(row,col))
+      print("TRYING TO GET PATH TO {},{} from {},{}".format(row,col,self.row,self.column))
       self.print_info()
       path = self.path_to_point(row,col,self.row,self.column,0,[])[0]
       path.reverse()
@@ -298,7 +303,7 @@ self.direction = {} \n""".format(self._map[6][0],self._map[6][1],self._map[6][2]
       self.turn_to(row,col)
       self.row = row
       self.column = col
-      self.to_do.append((Agent.Action.FORWARD,(self.row,self.column)))
+      self.to_do.append((Agent.Action.FORWARD,(self.row,self.column),self.direction))
       return
 
     def search(self):
