@@ -148,15 +148,16 @@ self.maxrow = {}
 self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self._map[6][3],self._map[6][4],self._map[6][5],self._map[6][6],self._map[5][0],self._map[5][1],self._map[5][2],self._map[5][3],self._map[5][4],self._map[5][5],self._map[5][6],self._map[4][0],self._map[4][1],self._map[4][2],self._map[4][3],self._map[4][4],self._map[4][5],self._map[4][6],self._map[3][0],self._map[3][1],self._map[3][2],self._map[3][3],self._map[3][4],self._map[3][5],self._map[3][6],self._map[2][0],self._map[2][1],self._map[2][2],self._map[2][3],self._map[2][4],self._map[2][5],self._map[2][6],self._map[1][0],self._map[1][1],self._map[1][2],self._map[1][3],self._map[1][4],self._map[1][5],self._map[1][6],self._map[0][0],self._map[0][1],self._map[0][2],self._map[0][3],self._map[0][4],self._map[0][5],self._map[0][6],self.row,self.column,self.frontier,self.direction,self.t_row,self.t_col,self.maxrow,self.maxcol))
 
     def hitEdge(self):
-      """if self.bumped == False:"""
-      if self.direction == "R":
+      if self.t_dir == "R":
         self.bumped = True
         self.t_col+=-1
         self.maxcol = self.t_col
-      elif self.direction == "U":
+        self.direction = self.t_dir
+      elif self.t_dir == "U":
         self.bumped = True
         self.t_row+=-1
         self.maxrow = self.t_row
+        self.direction = self.t_dir
       if self.bumped:
         to_remove = []
         for i in self.frontier:
@@ -311,7 +312,7 @@ self.maxcol = {}""".format(self._map[6][0],self._map[6][1],self._map[6][2],self.
       path = self.path_to_point(row,col,self.row,self.column,0,[])
       if path != False:
         path[0].reverse()
-        """print("PATH TO {},{}:{}".format(row,col,path))"""
+        """print("PATH TO {},{}:{}".format(row,col,path[0]))"""
         while len(path[0]) != 0:
           self.move_to_next(path[0][0][0],path[0][0][1])
           path[0].pop(0)
